@@ -115,3 +115,10 @@ set -euo pipefail\
     > cargo-vendor.txt                                              \
 }\
 )
+
+# applicable to specs generated using rust2rpm
+# where installing crate source as library is unnecessary, use this macro
+# to install crates that build as single binary
+%crate_install_bin (\
+%{__install} -m 0755 target/rpm/%{?crate} -D %{buildroot}%{_bindir}/%{?crate} \
+)
