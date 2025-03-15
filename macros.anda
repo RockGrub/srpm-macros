@@ -31,3 +31,5 @@
 %crate_install_bin (\
 %{__install} -m 0755 target/rpm/%{?crate} -D %{buildroot}%{_bindir}/%{?crate} \
 )
+
+%evr %{?epoch:%{epoch}:}%{version}-%{release}
