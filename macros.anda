@@ -13,7 +13,7 @@
   if (ref == '%version') or (branch == '') then
     error("%version is not defined")
   end
-  local dir = (url:gsub("/(%.git)?$", "")):gsub("^.+/", "")
+  local dir = (url:gsub("/(%.git)?$", "")):gsub("^.+/", ""):gsub("%.git", "")
   local command = 'git clone --recurse-submodules -q -j$(nproc) ' .. url
   if (ref:len() == 40 or ref:len() == 7) and not(ref:find("%X")) then
     command = command .. ' && cd ' .. dir .. ' && git checkout -q ' .. ref
