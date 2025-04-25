@@ -4,9 +4,9 @@ set -eu \
 cat > .cargo/config << EOF \
 [profile.rpm]\
 inherits = "release"\
-opt-level = 3\
-codegen-units = 1\
-debug = 2\
+opt-level = %{rustflags_opt_level}\
+codegen-units = %{rustflags_codegen_units}\
+debug = %{rustflags_debuginfo}\
 strip = "none"\
 \
 \
