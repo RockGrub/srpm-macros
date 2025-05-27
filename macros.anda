@@ -78,7 +78,7 @@
   if rpm.isdefined("-e") then
     format_print("elvish", "elvish")
     for i = 1, bins_num do
-      print("%_datadir/elvish/lib/completions/"..bins[i]..".elv\\n")
+      print("%elvish_completions_dir/"..bins[i]..".elv\\n")
     end
     print("\\n")
   end
