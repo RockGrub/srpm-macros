@@ -29,6 +29,14 @@
 
 %elvish_completions_dir %_datadir/elvish/lib/completions
 
+# pkg_completion -Bbefz -n pkgname cmd1 cmd2 ...
+# -B: bash (but the completion file doesn't have `.bash` extension)
+# -b: bash
+# -e: elvish
+# -f: fish
+# -z: zsh
+# -n <pkgname>: name of the current package (default `%name`)
+# cmd1 ...: the commands the completion files are for
 %pkg_completion(Bbefzn:) %{lua:
   local shells = {}
   local pkg = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
