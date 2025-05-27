@@ -26,3 +26,66 @@
 }
 
 %evr %{?epoch:%{epoch}:}%{version}-%{release}
+
+%elvish_completions_dir %_datadir/elvish/lib/completions
+
+%pkg_completion(Bbefzn:) %{lua:
+  local shells = {}
+  local pkg = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
+  local bins_num = tonumber(rpm.expand("%#"))
+  local bins = {}
+  local evr = rpm.expand("%evr")
+  
+  for i = 1, bins_num do
+    bins[i] = rpm.expand("%"..i)
+  end
+  
+  function format_print(sh, req)
+    local sh_proper = sh:sub(1,1):upper()..sh:sub(2)
+    print("%package -n "..pkg.."-"..sh.."-completion\\n")
+    print("Summary: "..sh_proper.." completion for "..pkg.."\\n")
+    print("Requires: "..pkg.." = "..evr.."\\n")
+    print("Requires: "..req.."\\n")
+    print("Supplements: ("..pkg.." and "..req..")\\n")
+    print("BuildArch: noarch\\n\\n")
+    print("%description -n "..pkg.."-"..sh.."-completion\\n")
+    print(sh_proper.." command line completion support for "..pkg..".\\n\\n")
+    print("%files -n "..pkg.."-"..sh.."-completion\\n")
+  end
+
+  if rpm.isdefined("-b") then
+    format_print("bash", "bash-completion")
+    for i = 1, bins_num do
+      print("%bash_completions_dir/"..bins[i]..".bash\\n")
+    end
+    print("\\n")
+  end
+  if rpm.isdefined("-B") then
+    format_print("bash", "bash-completion")
+    for i = 1, bins_num do
+      print("%bash_completions_dir/"..bins[i].."\\n")
+    end
+    print("\\n")
+  end
+  if rpm.isdefined("-e") then
+    format_print("elvish", "elvish")
+    for i = 1, bins_num do
+      print("%_datadir/elvish/lib/completions/"..bins[i]..".elv\\n")
+    end
+    print("\\n")
+  end
+  if rpm.isdefined("-f") then
+    format_print("fish", "fish")
+    for i = 1, bins_num do
+      print("%fish_completions_dir/"..bins[i]..".fish\\n")
+    end
+    print("\\n")
+  end
+  if rpm.isdefined("-z") then
+    format_print("zsh", "zsh")
+    for i = 1, bins_num do
+      print("%zsh_completions_dir/_"..bins[i].."\\n")
+    end
+    print("\\n")
+  end
+}
