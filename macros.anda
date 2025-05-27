@@ -64,35 +64,35 @@
   if rpm.isdefined("-b") then
     format_print("bash", "bash-completion")
     for i = 1, bins_num do
-      print("%bash_completions_dir/"..bins[i]..".bash\\n")
+      print(rpm.expand("%bash_completions_dir/"..bins[i]..".bash\\n"))
     end
     print("\\n")
   end
   if rpm.isdefined("-B") then
     format_print("bash", "bash-completion")
     for i = 1, bins_num do
-      print("%bash_completions_dir/"..bins[i].."\\n")
+      print(rpm.expand("%bash_completions_dir/"..bins[i].."\\n"))
     end
     print("\\n")
   end
   if rpm.isdefined("-e") then
     format_print("elvish", "elvish")
     for i = 1, bins_num do
-      print("%elvish_completions_dir/"..bins[i]..".elv\\n")
+      print(rpm.expand("%elvish_completions_dir/"..bins[i]..".elv\\n"))
     end
     print("\\n")
   end
   if rpm.isdefined("-f") then
     format_print("fish", "fish")
     for i = 1, bins_num do
-      print("%fish_completions_dir/"..bins[i]..".fish\\n")
+      print(rpm.expand("%fish_completions_dir/"..bins[i]..".fish\\n"))
     end
     print("\\n")
   end
   if rpm.isdefined("-z") then
     format_print("zsh", "zsh")
     for i = 1, bins_num do
-      print("%zsh_completions_dir/_"..bins[i].."\\n")
+      print(rpm.expand("%zsh_completions_dir/_"..bins[i].."\\n"))
     end
     print("\\n")
   end
