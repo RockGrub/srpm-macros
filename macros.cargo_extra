@@ -124,3 +124,10 @@ set -euo pipefail\
 %crate_install_bin (\
 %{__install} -m 0755 target/rpm/%{?crate} -D %{buildroot}%{_bindir}/%{?crate} \
 )
+
+%rustup_nightly \
+    %global __cargo /usr/bin/env CARGO_HOME=.cargo RUSTC_BOOTSTRAP=1 RUSTFLAGS='%{build_rustflags}' $HOME/.cargo/bin/cargo \
+    %global __rustc $HOME/.cargo/bin/rustc      \
+    %global __rustdoc $HOME/.cargo/bin/rustdoc  \
+    rustup-init --default-toolchain nightly -y  \
+    . "$HOME/.cargo/env"
