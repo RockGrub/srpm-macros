@@ -32,7 +32,9 @@ directory = "%{cargo_registry}"\
 \
 EOF\
 %{__rm} -f Cargo.toml.orig \
+%if 0%?fedora > 0\
 %global build_rustflags %build_rustflags %[%{with mold} ? "-C link-arg=-fuse-ld=mold" : ""]\
+%endif\
 )
 
 
