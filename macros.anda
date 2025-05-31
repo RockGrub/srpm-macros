@@ -49,6 +49,7 @@
   end
   if bins_num == 0 then
     bins[1] = pkg
+    bins_num = 1
   end
   
   function format_print(sh, req)
