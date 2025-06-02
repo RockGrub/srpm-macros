@@ -24,7 +24,7 @@
 %zig_build_march \
 %ifarch x86_64_v2
  %global _zig_cpu x86_64_v2 \
-%ifarch x86_64_v3
+%elifarch x86_64_v3
  %global _zig_cpu x86_64_v3 \
 %elifarch x86_64_v4
  %global _zig_cpu x86_64_v4 \
