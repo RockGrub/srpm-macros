@@ -4,7 +4,9 @@
 # Example for the above: Ghostty
 %zig_build_fast \
  %global _zig_release_mode fast \
-%ifarch x86_64_v3
+%ifarch x86_64_v2
+ %global _zig_cpu x86_64_v2 \
+%elifarch x86_64_v3
  %global _zig_cpu x86_64_v3 \
 %elifarch x86_64_v4
  %global _zig_cpu x86_64_v4 \
@@ -20,6 +22,8 @@
 # But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
 %zig_build_march \
+%ifarch x86_64_v2
+ %global _zig_cpu x86_64_v2 \
 %ifarch x86_64_v3
  %global _zig_cpu x86_64_v3 \
 %elifarch x86_64_v4
