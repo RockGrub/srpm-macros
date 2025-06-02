@@ -2,6 +2,25 @@
 # It however strips some debug info
 # This is best used in projects that have flags to override the debug stripping in fast release mode
 # Example for the above: Ghostty
+%ifarch x86_64_v3
+%zig_build_fast \
+ %global _zig_release_mode fast \
+ %global _zig_cpu x86_64_v3 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+%elifarch x86_64_v4
+%zig_build_fast \
+ %global _zig_release_mode fast \
+ %global _zig_cpu x86_64_v4 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+%else
 %zig_build_fast \
  %global _zig_release_mode fast \
 %{shrink: \
@@ -9,10 +28,11 @@
         build \
         %{?_zig_build_options} \
 }
+%endif
 
 # Zig microarch support
 # Generally --release=fast should be used with these
-# But I have made it so by default additional debug info should still be emitted
+# But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
 %zig_build_v3 \
  %global _zig_cpu x86_64_v3 \
@@ -22,25 +42,7 @@
         %{?_zig_build_options} \
 }
 
-%zig_build_v3_fast \
- %global _zig_release_mode fast \
- %global _zig_cpu x86_64_v3 \
-%{shrink: \
-    %zig \
-        build \
-        %{?_zig_build_options} \
-}
-
 %zig_build_v4 \
- %global _zig_cpu x86_64_v4 \
-%{shrink: \
-    %zig \
-        build \
-        %{?_zig_build_options} \
-}
-
-%zig_build_v4_fast \
- %global _zig_release_mode fast \
  %global _zig_cpu x86_64_v4 \
 %{shrink: \
     %zig \
