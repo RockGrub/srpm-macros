@@ -1,0 +1,49 @@
+# --release=fast is the recommended way to build most projects that rely on performance optimizations
+# It however strips some debug info
+# This is best used in projects that have flags to override the debug stripping in fast release mode
+# Example for the above: Ghostty
+%zig_build_fast \
+ %global _zig_release_mode fast \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
+# Zig microarch support
+# Generally --release=fast should be used with these
+# But I have made it so by default additional debug info should still be emitted
+# Note that Zig also supports Zen microarchitectures, however RPM does not
+%zig_build_v3 \
+ %global _zig_cpu x86_64_v3 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
+%zig_build_v3_fast \
+ %global _zig_release_mode fast \
+ %global _zig_cpu x86_64_v3 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
+%zig_build_v4 \
+ %global _zig_cpu x86_64_v4 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
+%zig_build_v4_fast \
+ %global _zig_release_mode fast \
+ %global _zig_cpu x86_64_v4 \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
