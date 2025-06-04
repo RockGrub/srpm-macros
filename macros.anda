@@ -101,3 +101,57 @@
     print("\\n")
   end
 }
+
+%_anda_srpm_macros_dir /usr/libexec/anda-srpm-macros
+
+# pkg_devel -F -n %name
+# -F: do not automatically gather files
+# -n <pkgname>: name of the main package, not devel! (default `%name`)
+%pkg_devel(Fn:) %{lua:
+  local name = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
+  print("%description -n "..name.."\\n")
+  print("The "..name.."-devel package contains libraries and header files for\\n")
+  print("developing applications that use "..name..".\\n\\n")
+  print("%package -n "..name.."-devel\\n")
+  print("Summary: Development files for "..name.."\\n")
+  if not opt.F then
+    print("%files -n "..name.." -f anda-develfiles.list\\n")
+    rpm.define("__spec_install_post ".."%__anda_develfiles\\n"..rpm.expand("%macrobody __spec_install_post"))
+  end
+}
+
+# files_devel -F -n %name
+# -n <pkgname>: name of the main package, not devel! (default `%name`)
+%files_devel(Fn:) %{lua:
+  local name = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
+  print("%files -n "..name.." -f anda-develfiles.list\\n")
+  rpm.define("__spec_install_post ".."%__anda_develfiles\\n"..rpm.expand("%macrobody __spec_install_post"))
+}
+
+%__anda_develfiles %_anda_srpm_macros_dir/find-develinfo.sh %buildroot > anda-develfiles.list
+
+
+# pkg_static -F -n %name
+# -F: do not automatically gather files
+# -n <pkgname>: name of the main package, not static! (default `%name`)
+%pkg_static(Fn:) %{lua:
+  local name = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
+  print("%description -n "..name.."\\n")
+  print("Static library files for "..name..".\\n\\n")
+  print("%package -n "..name.."-static\\n")
+  print("Summary: Static libraries for "..name.."\\n")
+  if not opt.F then
+    print("%files -n "..name.." -f anda-staticfiles.list\\n")
+    rpm.define("__spec_install_post ".."%__anda_staticfiles\\n"..rpm.expand("%macrobody __spec_install_post"))
+  end
+}
+
+# files_static -F -n %name
+# -n <pkgname>: name of the main package, not static! (default `%name`)
+%files_static(Fn:) %{lua:
+  local name = rpm.expand("%{?-n:%{-n*}}%{!?-n:%name}")
+  print("%files -n "..name.." -f anda-staticfiles.list\\n")
+  rpm.define("__spec_install_post ".."%__anda_staticfiles\\n"..rpm.expand("%macrobody __spec_install_post"))
+}
+
+%__anda_staticfiles %_anda_srpm_macros_dir/find-staticinfo.sh %buildroot > anda-staticfiles.list
