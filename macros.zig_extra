@@ -22,13 +22,8 @@
 # But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
 %zig_build_march \
-%ifarch x86_64_v2
- %global _zig_cpu x86_64_v2 \
-%elifarch x86_64_v3
- %global _zig_cpu x86_64_v3 \
-%elifarch x86_64_v4
- %global _zig_cpu x86_64_v4 \
-%endif
+%{expr:0%{lua:if rpm.expand("%_target_cpu"):find("^x86_64_v%d$") then print("1") else error("Unsupported architecture.") end} ? "%_target_cpu" : ""} \
+ %global _zig_cpu %{_target_cpu} \
 %{shrink: \
     %zig \
         build \
