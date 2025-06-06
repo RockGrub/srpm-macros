@@ -2,6 +2,9 @@
 # Generally --release=fast should be used with these
 # But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
+# -v2: Build optimized for x86_64_v2
+# -v3: Build optimized for x86_64_v3
+# -v4: Build optimized for x86_64_v4
 %zig_build_march(v2v3v4:) %{lua:
 if rpm.isdefined("-v2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
@@ -33,7 +36,12 @@ end} \
 # It however strips some debug info
 # This is best used in projects that have flags to override the debug stripping in fast release mode
 # Example for the above: Ghostty
-%zig_build_fast(v2v3v4:) \ 
+# Option reference:
+# -v2: Build release fast optimized for x86_64_v2
+# -v3: Build release fast optimized for x86_64_v3
+# -v4: Build release fast optimized for x86_64_v4
+# -t:  "Target." Build release fast optimized for _target_arch (fallback option, mainly for ARM architectures)
+%zig_build_fast(v2v3v4t:) \ 
  %global _zig_release_mode fast \
  %{lua:
  -- Only succeed with flags on x86_64 architectures.
@@ -51,6 +59,10 @@ end} \
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu" .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
+    end
+  elseif rpm.isdefined("-t") then
+    local target = rpm.expand("%_target_cpu")
+    rpm.define("_zig_cpu" .. target)
     end
    end} \
 %{shrink: \
