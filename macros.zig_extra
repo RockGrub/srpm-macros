@@ -35,3 +35,22 @@ if rpm.isdefined("-a") then
         build \
         %{?_zig_build_options} \
 }
+
+# --release=small is the recommended way to build some projects, as it builds smaller bins and in some programs has comparable performance
+# It however strips some debug info, like --release=fast
+# Option reference:
+# -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
+# -t: "Target." Build release fast optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
+%zig_build_small(ta:) %{lua:
+   if rpm.isdefined("-a") then
+    rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
+  elseif rpm.isdefined("-t") then
+    rpm.define("_zig_cpu " .. rpm.expand("%_target_cpu"))
+  end} \
+%global _zig_release_mode small \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
