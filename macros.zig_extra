@@ -40,7 +40,7 @@ if rpm.isdefined("-a") then
 # It however strips some debug info, like --release=fast
 # Option reference:
 # -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
-# -t: "Target." Build release fast optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
+# -t: "Target." Build release small optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
 %zig_build_small(ta:) %{lua:
    if rpm.isdefined("-a") then
     rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
