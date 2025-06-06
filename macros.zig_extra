@@ -8,8 +8,7 @@
 if rpm.isdefined("-a") then
   rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
   else
-   local target = rpm.expand("%_target_cpu")
-   rpm.define("_zig_cpu " .. target)
+  rpm.define("_zig_cpu " .. rpm.expand("%_target_cpu"))
   end} \
 %{shrink: \
     %zig \
@@ -28,8 +27,7 @@ if rpm.isdefined("-a") then
    if rpm.isdefined("-a") then
     rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
   elseif rpm.isdefined("-t") then
-    local target = rpm.expand("%_target_cpu")
-    rpm.define("_zig_cpu " .. target)
+    rpm.define("_zig_cpu " .. rpm.expand("%_target_cpu"))
   end} \
 %global _zig_release_mode fast \
 %{shrink: \
