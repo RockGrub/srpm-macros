@@ -5,6 +5,7 @@
 # -v2: Build optimized for x86_64_v2
 # -v3: Build optimized for x86_64_v3
 # -v4: Build optimized for x86_64_v4
+# No flag: Fallback to _target_arch
 %zig_build_march(v2v3v4:) %{lua:
 if rpm.isdefined("-v2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
