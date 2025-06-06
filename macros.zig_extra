@@ -45,7 +45,7 @@ if rpm.isdefined("-2") then
  -- Only succeed with flags on x86_64 architectures.
    if rpm.isdefined("-2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v2")
+    rpm.define("_zig_cpu " .. "x86_64_v2")
     else error("Incompatible architecture for march option.") 
     end
    elseif rpm.isdefined("-3") then
@@ -61,8 +61,7 @@ if rpm.isdefined("-2") then
   elseif rpm.isdefined("-t") then
     local target = rpm.expand("%_target_cpu")
     rpm.define("_zig_cpu " .. target)
-    end
-   end} \
+  end} \
 %global _zig_release_mode fast \
 %{shrink: \
     %zig \
