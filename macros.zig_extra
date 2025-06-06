@@ -2,26 +2,11 @@
 # Generally --release=fast should be used with these
 # But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
-# -2: Build optimized for x86_64_v2
-# -3: Build optimized for x86_64_v3
-# -4: Build optimized for x86_64_v4
+# -a: Choose a specific (micro)architecture to build for
 # No flag: Fallback to _target_arch
-%zig_build_march(234) %{lua:
-if rpm.isdefined("-2") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v2")
-    else error("Incompatible architecture for march option.") 
-    end
-   elseif rpm.isdefined("-3") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v3")
-    else error("Incompatible architecture for march option.") 
-    end
-  elseif rpm.isdefined("-4") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v4")
-    else error("Incompatible architecture for march option.") 
-    end
+%zig_build_march(a:) %{lua:
+if rpm.isdefined("-a") then
+  rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
   else
    local target = rpm.expand("%_target_cpu")
    rpm.define("_zig_cpu " .. target)
@@ -37,27 +22,11 @@ if rpm.isdefined("-2") then
 # This is best used in projects that have flags to override the debug stripping in fast release mode
 # Example for the above: Ghostty
 # Option reference:
-# -2: Build release fast optimized for x86_64_v2
-# -3: Build release fast optimized for x86_64_v3
-# -4: Build release fast optimized for x86_64_v4
-# -t:  "Target." Build release fast optimized for _target_arch (fallback option, mainly for ARM architectures)
-%zig_build_fast(234t) %{lua:
- -- Only succeed with flags on x86_64 architectures.
-   if rpm.isdefined("-2") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v2")
-    else error("Incompatible architecture for march option.") 
-    end
-   elseif rpm.isdefined("-3") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v3")
-    else error("Incompatible architecture for march option.") 
-    end
-  elseif rpm.isdefined("-4") then
-    if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu " .. "x86_64_v4")
-    else error("Incompatible architecture for march option.") 
-    end
+# -a: "Arch." Choose a specific (micro)architecture to build for
+# -t: "Target." Build release fast optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
+%zig_build_fast(ta:) %{lua:
+   if rpm.isdefined("-a") then
+    rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
   elseif rpm.isdefined("-t") then
     local target = rpm.expand("%_target_cpu")
     rpm.define("_zig_cpu " .. target)
