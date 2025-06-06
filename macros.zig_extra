@@ -41,9 +41,7 @@ if rpm.isdefined("-2") then
 # -3: Build release fast optimized for x86_64_v3
 # -4: Build release fast optimized for x86_64_v4
 # -t:  "Target." Build release fast optimized for _target_arch (fallback option, mainly for ARM architectures)
-%zig_build_fast(234t:) \ 
- %global _zig_release_mode fast \
- %{lua:
+%zig_build_fast(234t:) %{lua:
  -- Only succeed with flags on x86_64 architectures.
    if rpm.isdefined("-2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
@@ -65,6 +63,7 @@ if rpm.isdefined("-2") then
     rpm.define("_zig_cpu " .. target)
     end
    end} \
+%global _zig_release_mode fast \
 %{shrink: \
     %zig \
         build \
