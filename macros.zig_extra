@@ -9,22 +9,22 @@
 %zig_build_march(v2v3v4:) %{lua:
 if rpm.isdefined("-v2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v2")
+    rpm.define("_zig_cpu " .. "x86_64_v2")
     else error("Incompatible architecture for march option.") 
     end
    elseif rpm.isdefined("-v3") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v3")
+    rpm.define("_zig_cpu " .. "x86_64_v3")
     else error("Incompatible architecture for march option.") 
     end
   elseif rpm.isdefined("-v4") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v4")
+    rpm.define("_zig_cpu " .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
     end
   else
    local target = rpm.expand("%_target_cpu")
-   rpm.define("_zig_cpu" .. target)
+   rpm.define("_zig_cpu " .. target)
   end} \
 %{shrink: \
     %zig \
@@ -52,17 +52,17 @@ if rpm.isdefined("-v2") then
     end
    elseif rpm.isdefined("-v3") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v3")
+    rpm.define("_zig_cpu " .. "x86_64_v3")
     else error("Incompatible architecture for march option.") 
     end
   elseif rpm.isdefined("-v4") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
-    rpm.define("_zig_cpu" .. "x86_64_v4")
+    rpm.define("_zig_cpu " .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
     end
   elseif rpm.isdefined("-t") then
     local target = rpm.expand("%_target_cpu")
-    rpm.define("_zig_cpu" .. target)
+    rpm.define("_zig_cpu " .. target)
     end
    end} \
 %{shrink: \
