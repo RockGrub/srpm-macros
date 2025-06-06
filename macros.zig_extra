@@ -2,7 +2,7 @@
 # Generally --release=fast should be used with these
 # But some packages it may still be desirable to emit extra debug info
 # Note that Zig also supports Zen microarchitectures, however RPM does not
-# -a: Choose a specific (micro)architecture to build for
+# -a: Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
 # No flag: Fallback to _target_arch
 %zig_build_march(a:) %{lua:
 if rpm.isdefined("-a") then
@@ -22,7 +22,7 @@ if rpm.isdefined("-a") then
 # This is best used in projects that have flags to override the debug stripping in fast release mode
 # Example for the above: Ghostty
 # Option reference:
-# -a: "Arch." Choose a specific (micro)architecture to build for
+# -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
 # -t: "Target." Build release fast optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
 %zig_build_fast(ta:) %{lua:
    if rpm.isdefined("-a") then
