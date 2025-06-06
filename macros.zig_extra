@@ -18,7 +18,7 @@ if rpm.isdefined("-v2") then
     rpm.define("_zig_cpu" .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
     end
-  elseif rpm.expand("%_target_cpu"):find("^x86_64_v%d$") then
+  else
    local target = rpm.expand("%_target_cpu")
    rpm.define("_zig_cpu" .. target)
    end
