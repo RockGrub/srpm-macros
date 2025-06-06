@@ -6,18 +6,18 @@
 # -v3: Build optimized for x86_64_v3
 # -v4: Build optimized for x86_64_v4
 # No flag: Fallback to _target_arch
-%zig_build_march(v2v3v4:) %{lua:
-if rpm.isdefined("-v2") then
+%zig_build_march(234:) %{lua:
+if rpm.isdefined("-2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu " .. "x86_64_v2")
     else error("Incompatible architecture for march option.") 
     end
-   elseif rpm.isdefined("-v3") then
+   elseif rpm.isdefined("-3") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu " .. "x86_64_v3")
     else error("Incompatible architecture for march option.") 
     end
-  elseif rpm.isdefined("-v4") then
+  elseif rpm.isdefined("-4") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu " .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
@@ -41,21 +41,21 @@ if rpm.isdefined("-v2") then
 # -v3: Build release fast optimized for x86_64_v3
 # -v4: Build release fast optimized for x86_64_v4
 # -t:  "Target." Build release fast optimized for _target_arch (fallback option, mainly for ARM architectures)
-%zig_build_fast(v2v3v4t:) \ 
+%zig_build_fast(234t:) \ 
  %global _zig_release_mode fast \
  %{lua:
  -- Only succeed with flags on x86_64 architectures.
-   if rpm.isdefined("-v2") then
+   if rpm.isdefined("-2") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu" .. "x86_64_v2")
     else error("Incompatible architecture for march option.") 
     end
-   elseif rpm.isdefined("-v3") then
+   elseif rpm.isdefined("-3") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu " .. "x86_64_v3")
     else error("Incompatible architecture for march option.") 
     end
-  elseif rpm.isdefined("-v4") then
+  elseif rpm.isdefined("-4") then
     if rpm.expand("%_target_cpu"):find("^x86_64") then 
     rpm.define("_zig_cpu " .. "x86_64_v4")
     else error("Incompatible architecture for march option.") 
