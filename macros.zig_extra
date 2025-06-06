@@ -1,22 +1,3 @@
-# --release=fast is the recommended way to build most projects that rely on performance optimizations
-# It however strips some debug info
-# This is best used in projects that have flags to override the debug stripping in fast release mode
-# Example for the above: Ghostty
-%zig_build_fast \
- %global _zig_release_mode fast \
-%ifarch x86_64_v2
- %global _zig_cpu x86_64_v2 \
-%elifarch x86_64_v3
- %global _zig_cpu x86_64_v3 \
-%elifarch x86_64_v4
- %global _zig_cpu x86_64_v4 \
-%endif
-%{shrink: \
-    %zig \
-        build \
-        %{?_zig_build_options} \
-}
-
 # Zig microarch support
 # Generally --release=fast should be used with these
 # But some packages it may still be desirable to emit extra debug info
@@ -24,6 +5,36 @@
 %zig_build_march \
 %{expr:0%{lua:if rpm.expand("%_target_cpu"):find("^x86_64_v%d$") then print("1") else error("Unsupported architecture.") end} ? "%_target_cpu" : ""} \
  %global _zig_cpu %{_target_cpu} \
+%{shrink: \
+    %zig \
+        build \
+        %{?_zig_build_options} \
+}
+
+# --release=fast is the recommended way to build most projects that rely on performance optimizations
+# It however strips some debug info
+# This is best used in projects that have flags to override the debug stripping in fast release mode
+# Example for the above: Ghostty
+%zig_build_fast(v2v3v4:) \ 
+ %global _zig_release_mode fast \
+ %{lua:
+ -- Only succeed with flags on x86_64 architectures.
+   if rpm.isdefined("-v2") then
+    if rpm.expand("%_target_cpu"):find("^x86_64") then 
+    rpm.define("_zig_cpu" .. "x86_64_v2")
+    else error("Incompatible build arch and option.") 
+    end
+   elseif rpm.isdefined("-v3") then
+    if rpm.expand("%_target_cpu"):find("^x86_64") then 
+    rpm.define("_zig_cpu" .. "x86_64_v3")
+    else error("Incompatible build arch and option.") 
+    end
+  elseif rpm.isdefined("-v4") then
+    if rpm.expand("%_target_cpu"):find("^x86_64") then 
+    rpm.define("_zig_cpu" .. "x86_64_v4")
+    else error("Incompatible build arch and option.") 
+    end
+   end} \
 %{shrink: \
     %zig \
         build \
