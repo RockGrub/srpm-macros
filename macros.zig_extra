@@ -33,7 +33,7 @@
 # --release=small is the recommended way to build some projects, as it builds smaller bins and in some programs has comparable performance
 # It however strips some debug info, like --release=fast
 # Option reference:
-# -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
+# -a (with option): "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
 # -a (without option): Build release small optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
 %zig_build_small(a::) %{lua:
    if rpm.isdefined("-a") then
