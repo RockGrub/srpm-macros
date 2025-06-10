@@ -1,52 +1,37 @@
-# Zig microarch support
-# Generally --release=fast should be used with these
-# But some packages it may still be desirable to emit extra debug info
-# Note that Zig also supports Zen microarchitectures, however RPM does not
-# -a: Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
-# No flag: Fallback to _target_arch
-%zig_build_march(a:) %{lua:
-   rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}%{?!-a:%_target_cpu}"))} \
-%{shrink: \
-    %zig \
-        build \
-        %{?_zig_build_options} \
-}
+## Note: Zig microarch support
+# Generally ReleaseFast should be used with microarch builds for optimization.
+# But some packages it may still be desirable to emit extra debug info.
+# Note that Zig also supports Zen microarchitectures, however RPM does not.
+# Reference: https://ziglang.org/documentation/master/#Targets
 
-# --release=fast is the recommended way to build most projects that rely on performance optimizations
-# It however strips some debug info
-# This is best used in projects that have flags to override the debug stripping in fast release mode
+## Note:
+# ReleaseFast is the recommended way to build most projects that rely on performance optimizations.
+# It however strips some debug info.
+# This is best used in projects that have flags to override the debug stripping in fast release mode.
 # Example for the above: Ghostty
-# Option reference:
-# -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
-# -t: "Target." Build release fast optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
-%zig_build_fast(ta:) %{lua:
-   if rpm.isdefined("-a") then
-    rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
-   elseif rpm.isdefined("-t") then
-    rpm.define("_zig_cpu " .. rpm.expand("%_target_cpu"))
+# ReleaseSmall is the recommended way to build some projects, as it builds smaller bins and in some programs has comparable performance.
+# It however strips some debug info, like ReleaseFast.
+# There is also ReleaseDebug, but this is almost never a good idea for distributed programs as the build size is large and performance is poor.
+# Reference: https://ziglang.org/documentation/master/#Build-Mode
+
+
+## Option reference:
+# -c (with argument): "CPU." Choose a specific CPU (micro)architecture to build for. Can also be used to enable/disable CPU features (example: AVX2)
+# -c (without argument): Fallback to the target architecture set by RPM (generic option, only applicable to arches where RPM and Zig use the same format)
+# -r: "Release." Choose the build/release mode Zig will use. Note that "safe" is the default set by the Zig macros so it is never necessary to specify this option.
+%zig_build_target(cr:) %{lua:
+   if opt.c then
+    if rpm.expand("%1"):find("%w") then
+     rpm.define("_zig_cpu " .. rpm.expand("%1"))
+    else
+     rpm.define("_zig_cpu " .. rpm.expand("%{_target_cpu}"))
+    end
+   end
+   if opt.r then
+    rpm.define("_zig_release_mode " .. rpm.expand("%{?-r:%{-r*}}"))
    end} \
-%global _zig_release_mode fast \
 %{shrink: \
     %zig \
         build \
         %{?_zig_build_options} \
 }
-
-# --release=small is the recommended way to build some projects, as it builds smaller bins and in some programs has comparable performance
-# It however strips some debug info, like --release=fast
-# Option reference:
-# -a: "Arch." Choose a specific (micro)architecture to build for. Can also be used to enable/disable architecture features
-# -t: "Target." Build release small optimized for _target_arch (fallback option, only applicable to arches where RPM and Zig use the same format)
-%zig_build_small(ta:) %{lua:
-   if rpm.isdefined("-a") then
-    rpm.define("_zig_cpu " .. rpm.expand("%{?-a:%{-a*}}"))
-   elseif rpm.isdefined("-t") then
-    rpm.define("_zig_cpu " .. rpm.expand("%_target_cpu"))
-   end} \
-%global _zig_release_mode small \
-%{shrink: \
-    %zig \
-        build \
-        %{?_zig_build_options} \
-}
-
