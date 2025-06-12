@@ -32,9 +32,10 @@ directory = "%{cargo_registry}"\
 \
 EOF\
 %{__rm} -f Cargo.toml.orig \
-%if 0%?fedora > 0\
-%global build_rustflags %build_rustflags %[%{with mold} ? "-C link-arg=-fuse-ld=mold" : ""]\
-%endif\
+%{lua: 
+if rpm.expand("%{fedora}"):find("^%d") then 
+rpm.define("build_rustflags " .. rpm.expand("%build_rustflags %[%{with mold} ? \\"-C link-arg=-fuse-ld=mold\\" : \\"\\"]"))
+end}\
 )
 
 
@@ -55,18 +56,18 @@ EOF\
 %cargo_license_online(naf:)\
 (\
 set -euo pipefail\
-%{shrink:                                                           \
-    %{__cargo} tree                                                 \
-    -Z avoid-dev-deps                                               \
-    --workspace                                                     \
-    --edges no-build,no-dev,no-proc-macro                           \
-    --no-dedupe                                                     \
-    --target all                                                    \
-    %{__cargo_parse_opts %{-n} %{-a} %{-f:-f%{-f*}}}                \
-    --prefix none                                                   \
-    --format "{l}: {p}"                                             \
-    | sed -e "s: ($(pwd)[^)]*)::g" -e "s: / :/:g" -e "s:/: OR :g"   \
-    | sort -u                                                       \
+%{shrink:                                                                                \
+    %{__cargo} tree                                                                      \
+    -Z avoid-dev-deps                                                                    \
+    --workspace                                                                          \
+    --edges no-build,no-dev,no-proc-macro                                                \
+    --no-dedupe                                                                          \
+    --target all                                                                         \
+    %{__cargo_parse_opts %{-n} %{-a} %{-f:-f%{-f*}}}                                     \
+    --prefix none                                                                        \
+    --format "{l}: {p}"                                                                  \
+    | sed -e "s: ($(pwd)[^)]*)::g" -e "s: / :/:g" -e "s:/: OR :g" -e "|/.*:|{s|/| OR |}" \
+    | sort -u                                                                            \
 }\
 )
 
@@ -89,7 +90,7 @@ set -euo pipefail\
     %{__cargo_parse_opts %{-n} %{-a} %{-f:-f%{-f*}}}                \
     --prefix none                                                   \
     --format "# {l}"                                                \
-    | sed -e "s: / :/:g" -e "s:/: OR :g"                            \
+    | sed -e "s: / :/:g" -e "s:/: OR :g" -e "|/.*:|{s|/| OR |}"     \
     | sort -u                                                       \
 }\
 )
