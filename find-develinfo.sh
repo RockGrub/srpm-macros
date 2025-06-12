@@ -4,12 +4,13 @@ buildroot=$1
 
 _includedir=$(rpm -E '%_includedir')
 _libdir=$(rpm -E '%_libdir')
-for f in $buildroot/$_includedir; do
-	echo $f
-done
-for f in $buildroot/$_libdir/*.so; do
-	echo $f
-done
-for f in $buildroot/$_libdir/pkgconfig/*.pc; do
-	echo $f
-done
+list() {
+	for f in $buildroot/$1; do
+		echo ${f#"$buildroot"}
+	done
+}
+list $_includedir/*
+list $_includedir/*
+list $_libdir/*.so
+list $_libdir/pkgconfig/*.pc
+list /usr/share/gir-1.0/*.gir
