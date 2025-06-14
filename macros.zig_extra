@@ -29,7 +29,7 @@
    end
    if opt.r then
     rpm.define("_zig_release_mode " .. rpm.expand("%{?-r:%{-r*}}"))
-   end} \
+   end} \\\
 %{shrink: \
     %zig \
         build \
