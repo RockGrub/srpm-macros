@@ -28,6 +28,10 @@ ln -sf %{buildroot}%{nodejs_sitearch} %{buildroot}/lib                          
 %{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
 rm %{buildroot}/lib
 
+# Grab doc files if using npm_install
+fetch_node_docs() \
+   /usr/bin/cp $(find %{buildroot}/usr/lib/node*/%{node_module} -maxdepth 1 -type f -iname *LICENSE* -and -iname *.md) -t .
+
 # Requires nodejs-license-checker as a build dep
 %npm_license_summary() \
    /usr/bin/license-checker --summary
