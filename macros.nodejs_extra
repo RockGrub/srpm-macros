@@ -4,7 +4,7 @@
 
 # For use in prep section for when manual install steps are needed for any reason
 %npm_prep(n:) %{lua:
-   if opt.n
+   if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
    end} \\\
 %{__npm} install -g %{node_module}@%{version} --prefix=. \
@@ -12,7 +12,7 @@
 
 # For use in install section when no manual intervention is needed
 %npm_install(n:) %{lua:
-   if opt.n
+   if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
    end} \\\
 ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     \
