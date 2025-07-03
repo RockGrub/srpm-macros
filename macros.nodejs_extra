@@ -1,6 +1,6 @@
 ## These macros REQUIRE that the macro node_module be defined or the module be passed to them
 
-%__npm() /usr/bin/env NPM_CONFIG_USERCONFIG=%{builddir}/.npmrc NPM_CONFIG_GLOBALCONFIG=%{builddir}/npmrc NPM_CONFIG_CACHE=%{builddir}/.npm NPM_CONFIG_LOGLEVEL=warn /usr/bin/npm
+%__npm() /usr/bin/env NPM_CONFIG_USERCONFIG=%{builddir}/.npmrc NPM_CONFIG_GLOBALCONFIG=%{builddir}/npmrc NPM_CONFIG_CACHE=%{builddir}/.npm NPM_CONFIG_LOGLEVEL=silent /usr/bin/npm
 
 # For use in prep section
 %npm_prep(n:) %{lua:
@@ -27,6 +27,9 @@ ln -sf %{nodejs_sitelib}/%{node_module}/bin/%{node_module} %{buildroot}%{_bindir
 %npm_license_summary() \
    /usr/bin/license-checker --summary
 
-%npm_license() %{shrink:                                                                                                                               \
-   /usr/bin/license-checker | sed '/.*repository:.*/d;/.*publisher:.*/d;/.*email:.*/d;/.*url:.*/d;/.*path:.*/d;/.*licenseFile:.*/d;/.*noticeFile:.*/d' \
-}
+%npm_license() \
+   /usr/bin/license-checker | sed '/.*repository:.*/d;/.*publisher:.*/d;/.*email:.*/d;/.*url:.*/d;/.*path:.*/d;/.*licenseFile:.*/d;/.*noticeFile:.*/d'
+
+# Only applicable if a test folder is provided from a source repo
+%node_self_test () \
+  NODE_ENV=test bin/%{node_module} -R tests
