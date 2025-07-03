@@ -15,7 +15,7 @@
    if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
    end} \\\
-ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}/%{_libdir}                    \
+ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     \
 %{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
 rm %{buildroot}%{_libdir}
 
