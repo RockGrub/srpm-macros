@@ -20,8 +20,8 @@ ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     
 rm %{buildroot}%{_libdir}
 
 # Requires nodejs-license-checker as a build dep
-%npm_license_summary \
+%npm_license_summary() \
    /usr/bin/license-checker --summary
 
-%npm_license \
+%npm_license() \
    /usr/bin/license-checker | sed '/.*repository:.*/d;/.*publisher:.*/d;/.*email:.*/d;/.*url:.*/d;/.*path:.*/d;/.*licenseFile:.*/d;/.*noticeFile:.*/d'
