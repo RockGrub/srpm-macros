@@ -15,9 +15,18 @@
    if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
    end} \\\
-ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     \
+ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}/%{_libdir}                    \
 %{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
 rm %{buildroot}%{_libdir}
+
+# For architecture dependent packages
+%npm_install_sietarch(n:) %{lua:
+   if opt.n then
+     rpm.define("node_module " .. rpm.expand("%{-n*}"))
+   end} \\\
+ln -sf %{buildroot}%{nodejs_sitearch} %{buildroot}/lib                          \
+%{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
+rm %{buildroot}/lib
 
 # Requires nodejs-license-checker as a build dep
 %npm_license_summary() \
