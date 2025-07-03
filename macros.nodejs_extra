@@ -1,0 +1,27 @@
+## These macros REQUIRE that the macro node_module be defined or the module be passed to them
+
+%__npm() /usr/bin/env NPM_CONFIG_USERCONFIG=.npmrc NPM_CONFIG_GLOBALCONFIG=npmrc NPM_CONFIG_CACHE=.npm NPM_CONFIG_LOGLEVEL=warn /usr/bin/npm
+
+# For use in prep section for when manual install steps are needed for any reason
+%npm_prep(n:) %{lua:
+   if opt.n
+     rpm.define("node_module " .. rpm.expand("%{-n*}"))
+   end} \\\
+%{__npm} install -g %{node_module}@%{version} --prefix=. \
+%setup -T -D -n lib/node_modules/%{node_module}
+
+# For use in install section when no manual intervention is needed
+%npm_install(n:) %{lua:
+   if opt.n
+     rpm.define("node_module " .. rpm.expand("%{-n*}"))
+   end} \\\
+ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     \
+%{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
+rm %{buildroot}%{_libdir}
+
+# Requires nodejs-license-checker as a build dep
+%npm_license_summary \
+   /usr/bin/license-checker --summary
+
+%npm_license \
+   /usr/bin/license-checker | sed '/.*repository:.*/d;/.*publisher:.*/d;/.*email:.*/d;/.*url:.*/d;/.*path:.*/d;/.*licenseFile:.*/d;/.*noticeFile:.*/d'
