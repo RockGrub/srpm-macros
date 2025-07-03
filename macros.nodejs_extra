@@ -1,8 +1,8 @@
 ## These macros REQUIRE that the macro node_module be defined or the module be passed to them
 
-%__npm() /usr/bin/env NPM_CONFIG_USERCONFIG=.npmrc NPM_CONFIG_GLOBALCONFIG=npmrc NPM_CONFIG_CACHE=.npm NPM_CONFIG_LOGLEVEL=warn /usr/bin/npm
+%__npm() /usr/bin/env NPM_CONFIG_USERCONFIG=%{builddir}/.npmrc NPM_CONFIG_GLOBALCONFIG=%{builddir}/npmrc NPM_CONFIG_CACHE=%{builddir}/.npm NPM_CONFIG_LOGLEVEL=warn /usr/bin/npm
 
-# For use in prep section for when manual install steps are needed for any reason
+# For use in prep section
 %npm_prep(n:) %{lua:
    if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
@@ -10,27 +10,18 @@
 %{__npm} install -g %{node_module}@%{version} --prefix=. \
 %setup -T -D -n lib/node_modules/%{node_module}
 
-# For use in install section when no manual intervention is needed
-%npm_install(n:) %{lua:
-   if opt.n then
-     rpm.define("node_module " .. rpm.expand("%{-n*}"))
-   end} \\\
-ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     \
-%{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
-rm %{buildroot}%{_libdir}
+%npm_install()                                                                              \
+mkdir -p %{buildroot}%{nodejs_sitelib}/%{node_module}                                       \
+mkdir -p %{buildroot}%{_bindir}                                                             \
+cp -r ./* -t %{buildroot}%{nodejs_sitelib}/%{node_module}                                   \
+ln -sf %{nodejs_sitelib}/%{module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
 
 # For architecture dependent packages
-%npm_install_sitearch(n:) %{lua:
-   if opt.n then
-     rpm.define("node_module " .. rpm.expand("%{-n*}"))
-   end} \\\
-ln -sf %{buildroot}%{nodejs_sitearch} %{buildroot}/lib                          \
-%{__npm} install -g %{node_module}@%{version} --prefix="%{buildroot}%{_prefix}" \
-rm %{buildroot}/lib
-
-# Grab doc files if using npm_install
-fetch_node_docs() \
-   /usr/bin/cp $(find %{buildroot}/usr/lib*/node*/%{node_module} -maxdepth 1 -type f -iname *LICENSE* -and -iname *.md) -t .
+%npm_install_sitearch()                                                                     \
+mkdir -p %{buildroot}%{nodejs_sitearch}/%{node_module}                                      \
+mkdir -p %{buildroot}%{_bindir}                                                             \
+cp -r ./* -t %{buildroot}%{nodejs_sitearch}/%{node_module}                                  \
+ln -sf %{nodejs_sitelib}/%{module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
 
 # Requires nodejs-license-checker as a build dep
 %npm_license_summary() \
