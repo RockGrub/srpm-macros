@@ -20,7 +20,7 @@ ln -sf %{buildroot}%{nodejs_sitelib} %{buildroot}%{_libdir}                     
 rm %{buildroot}%{_libdir}
 
 # For architecture dependent packages
-%npm_install_sietarch(n:) %{lua:
+%npm_install_sitearch(n:) %{lua:
    if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
    end} \\\
