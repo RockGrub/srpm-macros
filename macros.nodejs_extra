@@ -26,19 +26,25 @@
    ln -sf %{nodejs_sitelib}/%{module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
 
 # For architecture dependent packages
-%npm_install_sitearch()                                                                             \
-   mkdir -p %{buildroot}%{nodejs_sitearch}/%{node_module}                                           \
-   mkdir -p %{buildroot}%{_bindir}                                                                  \
-   cp -r ./* -t %{buildroot}%{nodejs_sitearch}/%{node_module}                                       \
-   ln -sf %{nodejs_sitelib}/%{node_module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
+%npm_install_sitearch()                                                                              \
+   mkdir -p %{buildroot}%{nodejs_sitearch}/%{node_module}                                            \
+   mkdir -p %{buildroot}%{_bindir}                                                                   \
+   cp -r ./* -t %{buildroot}%{nodejs_sitearch}/%{node_module}                                        \
+   ln -sf %{nodejs_sitearch}/%{node_module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
 
 # Best used in check section
 %npm_audit() \
    %{__npm} audit --audit-level=low
 
 # Best used in prep section if check fails
-%npm_audit_fix() \
-   %{__npm} audit fix --only=prod
+%npm_audit_fix(dfo:O:p) %{__npm} audit fix %{shrink: \
+   %{-d:--dry-run}                                   \
+   %{-f:--force}                                     \
+   %{-o:--omit=%{-o*}}                               \
+   %{-O:--only=%{-O*}}                               \
+   %{-p:--package-lock-only}                         \
+   %{nil}                                            \
+}
 
 # Requires nodejs-license-checker as a build dep
 %npm_license_summary() \
