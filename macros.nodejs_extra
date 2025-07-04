@@ -6,6 +6,10 @@
 %npm_prep(n:) %{lua:
    if opt.n then
      rpm.define("node_module " .. rpm.expand("%{-n*}"))
+   end
+   local module = rpm.expand("%{?node_module}")
+   if (module == '%{node_module}') or (module == '%node_module') or (module == '') then
+     error("%node_module is not defined. Please define it using a global macro or with the -n flag.")
    end} \\\
 %{__npm} install -g %{node_module}@%{version} --prefix=. \
 %setup -T -D -n lib/node_modules/%{node_module}
