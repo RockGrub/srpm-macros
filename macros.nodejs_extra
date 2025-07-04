@@ -38,6 +38,7 @@
 
 # Best used in prep section if check fails
 # -d can be used to check what it will do before running, especially if using -f
+# Reference: https://docs.npmjs.com/cli/v7/commands/npm-audit
 %npm_audit_fix(dfo:O:p) %{__npm} audit fix %{shrink: \
    %{-d:--dry-run}                                   \
    %{-f:--force}                                     \
