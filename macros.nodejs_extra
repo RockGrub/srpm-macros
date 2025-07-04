@@ -32,6 +32,14 @@ mkdir -p %{buildroot}%{_bindir}                                                 
 cp -r ./* -t %{buildroot}%{nodejs_sitearch}/%{node_module}                                  \
 ln -sf %{nodejs_sitelib}/%{node_module}/bin/%{node_module} %{buildroot}%{_bindir}/%{node_module}
 
+# Best used in check section
+%npm_audit() \
+   %{__npm} audit --audit-level=low
+
+# Best used in prep section if check fails
+%npm_audit_fix() \
+   %{__npm} audit fix --only=prod
+
 # Requires nodejs-license-checker as a build dep
 %npm_license_summary() \
    /usr/bin/license-checker --summary
