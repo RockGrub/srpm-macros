@@ -58,9 +58,9 @@
 %fetch_node_tests(f:u:) %{lua:
    cmd = 'git clone -n --depth=1 --filter=tree:0 -q -j$(nproc) '
    if rpm.expand("%{?-f*}") == '' then
-     error("Folders/files not specified. Please specify them using the -f option.")
+     error("Test folders not specified. Please specify them using the -f option.")
    elseif string.sub(rpm.expand("%{-f*}"), 1, 1) ~= '/' then
-     error("Folders and paths to files must start with '/'")
+     error("Folders holding test files must start with '/'")
    else
      rpm.define("_nodetests " .. rpm.expand("%{-f*}"))
    end
